@@ -1,8 +1,12 @@
 package mc.tiktok;
 
 import org.bukkit.Bukkit;
+import org.bukkit.Material;
 import org.bukkit.World;
+import org.bukkit.entity.Creeper;
+import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
+import org.bukkit.entity.Zombie;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.potion.PotionEffect;
@@ -36,11 +40,76 @@ public class Main extends JavaPlugin {
 
     }
 
+    @SuppressWarnings("deprecation")
     @Override
     public void onEnable() {
 
         getLogger().info("TikTok Plugin Enabled.");
-        getServer().getPluginManager().registerEvents(new MyListener(), this);
+
+
+        TikTokLive.newClient("bumsdito").onComment((liveClient, e) -> {
+            
+
+            for (Player p : Bukkit.getOnlinePlayers()) {
+                p.sendMessage(Main.GREEN+e.getUser().getName()+": "+Main.GRAY+e.getText());
+                switch (e.getText()) {
+                    case "blind":
+                p.addPotionEffect(new PotionEffect(PotionEffectType.BLINDNESS, 75, 255));
+            break;
+
+            case "drop":
+                ItemStack i = p.getInventory().getItemInMainHand();
+                if (i!=null && i.getAmount()>0) {
+                    p.getWorld().dropItemNaturally(p.getLocation(),i.clone()).setPickupDelay(40);;
+                    p.getInventory().setItemInMainHand(null);
+                }
+            break;
+
+            case "zombie":
+                Creeper zombie = (Creeper) p.getWorld().spawnEntity(p.getLocation(), EntityType.CREEPER);
+                zombie.setCustomName(e.getUser().getName()); //change to tiktok user
+                zombie.setCustomNameVisible(true);
+            break;
+
+            case "tnt":
+                p.getWorld().spawnEntity(p.getLocation(), EntityType.TNT);
+            break;
+
+            case "float":
+                p.addPotionEffect(new PotionEffect(PotionEffectType.LEVITATION, 75, 1));
+            break;
+
+            case "food":
+                p.getInventory().addItem(new ItemStack(Material.COOKED_BEEF, 1));
+            break;
+                }
+
+
+            }
+            
+            
+
+        }).onGift((liveClient, tikTokGiftEvent) -> {
+            String message = switch(tikTokGiftEvent.getGift()) {
+                case ROSE -> "ROSE!";
+                case GG -> "GOOD GAME";
+                case TIKTOK -> "Ye";
+                case CORGI -> "Nice gift";
+                default -> "Thank you for " + event.getGift().getName();
+            };
+            
+        }).onLike((liveClient, e) -> {
+
+            for (Player p : Bukkit.getOnlinePlayers()) {
+                p.sendMessage(Main.GREEN+e.getUser().getName()+Main.RED+" has liked the LIVE <3");
+            }
+
+        }).onJoin((liveClient, e) -> {
+            for (Player p : Bukkit.getOnlinePlayers()) {
+                p.sendMessage(Main.GREEN+e.getUser().getName()+Main.AQUA+" has joined the LIVE");
+            }
+        }).buildAndConnect();
+
     }
 
     @Override
