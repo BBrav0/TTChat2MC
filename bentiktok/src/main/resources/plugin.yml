@@ -1,0 +1,5 @@
+name: BenTiktokMinecraft
+version: 1.0
+main: mc.tiktok.Main
+author: Benjamin Bravo
+api-version: 1.21.1
