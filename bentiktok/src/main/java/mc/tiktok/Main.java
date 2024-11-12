@@ -40,40 +40,7 @@ public class Main extends JavaPlugin {
     public void onEnable() {
 
         getLogger().info("TikTok Plugin Enabled.");
-
-
-        TikTokLive.newClient("bumsdito").onComment((liveClient, e) -> {
-            
-
-            for (Player p : Bukkit.getOnlinePlayers()) {
-                p.sendMessage(Main.GREEN+e.getUser().getName()+": "+Main.GRAY+e.getText());
-                switch (e.getText()) {
-                    case "drop":
-                    break;
-                    case "blind":
-                        p.addPotionEffect(new PotionEffect(PotionEffectType.BLINDNESS, 5, 255));
-                    break;
-                }
-
-
-            }
-            
-            
-
-        }).onGift((liveClient, tikTokGiftEvent) -> {
-            
-        }).onLike((liveClient, e) -> {
-
-            for (Player p : Bukkit.getOnlinePlayers()) {
-                p.sendMessage(Main.GREEN+e.getUser().getName()+Main.RED+" has liked the LIVE <3");
-            }
-
-        }).onJoin((liveClient, e) -> {
-            for (Player p : Bukkit.getOnlinePlayers()) {
-                p.sendMessage(Main.GREEN+e.getUser().getName()+Main.AQUA+" has joined the LIVE");
-            }
-        }).buildAndConnect();
-
+        getServer().getPluginManager().registerEvents(new MyListener(), this);
     }
 
     @Override
